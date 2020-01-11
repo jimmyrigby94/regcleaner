@@ -34,29 +34,29 @@ alpha_regex<-function(data, ..., verbose_output = FALSE, scale_regex="^[A-Za-z[:
     dplyr::select_if(function(x){is.numeric(x)|is.integer(x)})%>%
     tidyr::gather(key = key, value = value, -unique_row_id)%>%
     dplyr::filter(str_detect(key, item_regex))%>%
-    dplyr::mutate(scale = str_extract(key, scale_regex))%>%
+    dplyr::mutate(scale = stringr::str_extract(key, scale_regex))%>%
     dplyr::mutate(scale = as.factor(scale))%>%
     dplyr::group_by(scale)%>%
     dplyr::mutate(items =  n_distinct(key))%>%
     dplyr::ungroup()%>%
     dplyr::filter(items>1)
 
-  message("Reliability Analysis Ran on ", n_distinct(scaled$scale), " scales.\n",
+  message("Reliability analysis ran on ", n_distinct(scaled$scale), " scales.\n",
           "Scale Names:\n",
           paste(unique(scaled$scale), collapse = " "))
 
   listed<-split(scaled, scaled$scale, drop = TRUE)
 
   alpha<-listed%>%
-      map(~spread(., key = key, value = value))%>%
-      map(~dplyr::select(., -unique_row_id, -scale, -items))%>%
-      map(~psych::alpha(.))
+    purrr::map(~tidyr::spread(., key = key, value = value))%>%
+    purrr::map(~dplyr::select(., -unique_row_id, -scale, -items))%>%
+    purrr::map(~psych::alpha(.))
 
   if(!verbose_output){
     alpha_df<-alpha%>%
-      map_dfr(~as.data.frame(.$total))%>%
-      mutate(scale = names(alpha))%>%
-      select(scale, everything())
+      purrr::map_dfr(~as.data.frame(.$total))%>%
+      dplyr::mutate(scale = names(alpha))%>%
+      dplyr::select(scale, everything())
 
     return(alpha_df)
   }else{
