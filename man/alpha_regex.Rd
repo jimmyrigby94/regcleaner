@@ -37,5 +37,5 @@ personality<-bfi\%>\%
               mutate_at(vars(A1, E1, E2, O2, O5, C4, C5),
                         .funs = list(r = function(x){7-x}))
 
-cleaned<-alpha_regex(data = personality, A1, E1, E2, O2, O5, C4, C5)
+reliability<-alpha_regex(data = personality, A1, E1, E2, O2, O5, C4, C5)
 }
