@@ -44,6 +44,13 @@ scale_scores<-function(data, ..., completed_thresh = .75, scales_only = FALSE, s
                                  scale_score,
                                  as.numeric(NA)))%>%
     dplyr::select(-na_prop)%>%
+    filter(!is.na(scale))
+
+  message("Scale scores created for ", n_distinct(scaled$scale), " scales.\n",
+          "Scale Names:\n",
+          paste(unique(scaled$scale), collapse = " "))
+
+  scaled<-scaled%>%
     tidyr::spread(key = scale, value = scale_score)%>%
     dplyr::arrange(unique_row_id)%>%
     dplyr::ungroup()

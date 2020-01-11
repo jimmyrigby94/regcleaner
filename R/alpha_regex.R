@@ -28,18 +28,22 @@ alpha_regex<-function(data, ..., verbose_output = FALSE, scale_regex="^[A-Za-z[:
   dropquo<-enquos(...)
 
   scaled<-data%>%
-    mutate(unique_row_id = 1:nrow(data))%>%
-    mutate_all(.funs = funs(as.numeric))%>%
-    select(-c(!!!dropquo))%>%
-    gather(key = key, value = value, -unique_row_id)%>%
-    filter(str_detect(key, item_regex))%>%
-    mutate(scale = str_extract(key, scale_regex))%>%
-    mutate(scale = as.factor(scale))%>%
-    group_by(scale)%>%
-    mutate(items =  n_distinct(key))%>%
-    ungroup()%>%
-    filter(items>1)
+    dplyr::mutate(unique_row_id = 1:nrow(data))%>%
+    dplyr::mutate_all(.funs = funs(as.numeric))%>%
+    dplyr::select(-c(!!!dropquo))%>%
+    dplyr::select_if(function(x){is.numeric(x)|is.integer(x)})%>%
+    tidyr::gather(key = key, value = value, -unique_row_id)%>%
+    dplyr::filter(str_detect(key, item_regex))%>%
+    dplyr::mutate(scale = str_extract(key, scale_regex))%>%
+    dplyr::mutate(scale = as.factor(scale))%>%
+    dplyr::group_by(scale)%>%
+    dplyr::mutate(items =  n_distinct(key))%>%
+    dplyr::ungroup()%>%
+    dplyr::filter(items>1)
 
+  message("Reliability Analysis Ran on ", n_distinct(scaled$scale), " scales.\n",
+          "Scale Names:\n",
+          paste(unique(scaled$scale), collapse = " "))
 
   listed<-split(scaled, scaled$scale, drop = TRUE)
 
