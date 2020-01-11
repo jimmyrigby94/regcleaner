@@ -1,5 +1,5 @@
 ---
-title: "regcleaner"
+title: "regcleaner: Quick Survey Cleaning and Reliability Analysis using Regular Expressions"
 output: github_document
 ---
 
@@ -7,4 +7,85 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-An R package intended to streamline data cleaning through the use of regular expressions. 
+`regcleaner` is an R package intended to automate data cleaning and item analysis for multi-item scales often collected via surveys. Data cleaning is typicallly the most time consuming part of any analytic endeavor. The philosophy of this package is to capitalize on the information stored in column names to minimize the number of times researchers need to manipulate the data by hand. This speeds up the cleaning process and minimizes the number of errors committed. 
+
+## Installation
+
+To install regcleaner run the following code. 
+
+```{r, eval = FALSE}
+devtools::install_github("jimmyrigby94/regcleaner")
+```
+
+## A Few Quick Examples
+
+Currently `regcleaner` has two primary functions. The first is `scale_scores`, a function that uses regular expressions to identify multi-item scales and creates scale scores, or composite scores, by averaging the items for each observation. The other function, `alpha_regex`, facilitates item analysis and reliability analysis by capitalizing on information inherently stored in column names. 
+
+### Naming Conventions
+All functions in regcleaner use two regular expressions to identify scales and differentiate between items. The argument `scale_regex` pulls information from column names associated with the different measurements within a data frame. The argument `item_regex` pulls information from column names associated with the item in the sub scale. 
+
+Consider the `bfi` data set from the `psych` package. Each column is associated with an item that belongs to a sub scale. Information, or metadata, is stored within the column names that ties each item to a scale. Columns that belong to a multi-item scale end with a number, unique to the item, and begin with a letter unique to the scale. regcleaner extracts this information to create scale scores and run item analysis while ignoring columns that do not match these patterns.
+
+```{r}
+library(tidyverse)
+library(regcleaner)
+
+bfi<-psych::bfi
+
+glimpse(bfi)
+```
+
+### Creating Scale Scores
+The bfi naming convention happily align with the defaults for `scale_regex` and `item_regex` already. However, some items in the bfi data set need to be reverse coded. This can be done using dplyr. In order to keep a paper trail of the manipulations done to my data, I keep the raw non reverse coded columns in my data frame along with the new reverse coded items. The columns that have been reverse coded have "_r" appended to their original column names. Note that "r" and "_r" are handled by the item_regex. 
+
+```{r}
+personality<-bfi%>%
+              mutate_at(vars(A1, E1, E2, O2, O5, C4, C5),
+                        .funs = list(r = function(x){7-x}))
+```
+
+After handling the reverse coded items, I can create scale scores using the `scale_scores` function. To do this, I pass the data that contains the item data. The data frame contains some extra information that matches the regular expressions! Because I retained the raw non reverse coded items, `scale_scores` will use them to calculate the composite score unless they are dropped. Note that education, age, and gender do not need to be dropped because they don't match the `item_regex`. The new data frame contains the original items with the scale scores appended as additional columns. 
+
+```{r}
+cleaned<-scale_scores(data = personality, A1, E1, E2, O2, O5, C4, C5)
+
+glimpse(cleaned)
+```
+
+Some things to note about `scale_scores`. `scale_scores` contains an argument called `completed_thresh` that specifies the number of items within a scale the user must complete for the scale score to not be returned as `NA`. Its default is .75. This means that in order for a scale score to be calculated a respondent must complete 75% of the items. This prevents extrapolation from partially complete composite measures. 
+
+In addition there is an argument called `scales_only` which allows users to request only the composite scores. 
+
+
+### Item Analysis
+
+`alpha_regex` has an extremely similar function structure. It extracts scales from a data frame and than conducts item analysis using `alpha` from the psych package. Columns that match the regex patterns but should not be included in reliability can be dropped using tidyeval. The function defaults to returning a data frame summarizing the reliability analysis. This data frame includes the following: 
+
+    raw_alpha: alpha based upon the covariances
+
+    std.alpha: The standarized alpha based upon the correlations
+
+    G6(smc): Guttman's Lambda 6 reliability
+
+    average_r: The average interitem correlation
+
+    median_r: The median interitem correlation
+
+    mean: The mean of the scale formed by averaging items
+
+    sd: The standard deviation of the total score
+
+
+```{r}
+alpha_regex(cleaned, A1, E1, E2, O2, O5, C4, C5)
+```
+
+If more information is needed, for example the drop one reliability, you can request robust output which returns all the output from `psych::alpha` in list format for each scale score. 
+
+```{r}
+alpha_regex(cleaned, A1, E1, E2, O2, O5, C4, C5, verbose_output = TRUE)
+```
+
+### Adapting Regular Expressions
+The defaults for the item and stem regex were selected to match the most common use cases. However, there is never a one size fits all default. `item_regex` and `stem_regex` can be adapted in any way that matches your needs. See `?regex` for a variety of patterns that can be used to identify your scales and items.
+
