@@ -1,0 +1,10 @@
+---
+title: "regcleaner"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+An R package intended to streamline data cleaning through the use of regular expressions. 
