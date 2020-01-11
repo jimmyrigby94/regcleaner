@@ -26,7 +26,7 @@ All functions in regcleaner use two regular expressions to identify scales and d
 
 Consider the `bfi` data set from the `psych` package. Each column is associated with an item that belongs to a sub scale. Information, or metadata, is stored within the column names that ties each item to a scale. Columns that belong to a multi-item scale end with a number, unique to the item, and begin with a letter unique to the scale. regcleaner extracts this information to create scale scores and run item analysis while ignoring columns that do not match these patterns.
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 library(tidyverse)
 library(regcleaner)
 

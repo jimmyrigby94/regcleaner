@@ -45,20 +45,6 @@ analysis while ignoring columns that do not match these patterns.
 
 ``` r
 library(tidyverse)
-```
-
-    ## -- Attaching packages ---------------------------------- tidyverse 1.2.1.9000 --
-
-    ## v ggplot2 3.2.1     v purrr   0.3.2
-    ## v tibble  2.1.3     v dplyr   0.8.3
-    ## v tidyr   1.0.0     v stringr 1.4.0
-    ## v readr   1.3.1     v forcats 0.4.0
-
-    ## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
-    ## x dplyr::filter() masks stats::filter()
-    ## x dplyr::lag()    masks stats::lag()
-
-``` r
 library(regcleaner)
 
 bfi<-psych::bfi
@@ -126,7 +112,13 @@ appended as additional columns.
 
 ``` r
 cleaned<-scale_scores(data = personality, A1, E1, E2, O2, O5, C4, C5)
+```
 
+    ## Scale scores created for 5 scales.
+    ## Scale Names:
+    ## A C E N O
+
+``` r
 glimpse(cleaned)
 ```
 
@@ -211,6 +203,10 @@ analysis. This data frame includes the following:
 alpha_regex(cleaned, A1, E1, E2, O2, O5, C4, C5)
 ```
 
+    ## Reliability analysis ran on 5 scales.
+    ## Scale Names:
+    ## A C E N O
+
     ##   scale raw_alpha std.alpha   G6(smc) average_r      S/N         ase
     ## 1     A 0.7030184 0.7130286 0.6827627 0.3319677 2.484668 0.008951774
     ## 2     C 0.7267350 0.7300726 0.6942276 0.3510454 2.704700 0.008116697
@@ -231,6 +227,10 @@ can request robust output which returns all the output from
 ``` r
 alpha_regex(cleaned, A1, E1, E2, O2, O5, C4, C5, verbose_output = TRUE)
 ```
+
+    ## Reliability analysis ran on 5 scales.
+    ## Scale Names:
+    ## A C E N O
 
     ## $A
     ## 
