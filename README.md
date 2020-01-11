@@ -193,6 +193,10 @@ analysis. This data frame includes the following:
     
     average_r: The average interitem correlation
     
+    S/N: Signal to noise ratio (s/n = n r/(1-r))
+    
+    ase: Alpha Standard Error
+    
     median_r: The median interitem correlation
     
     mean: The mean of the scale formed by averaging items

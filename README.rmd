@@ -68,6 +68,10 @@ In addition there is an argument called `scales_only` which allows users to requ
     G6(smc): Guttman's Lambda 6 reliability
 
     average_r: The average interitem correlation
+    
+    S/N: Signal to noise ratio (s/n = n r/(1-r))
+    
+    ase: Alpha Standard Error
 
     median_r: The median interitem correlation
 
