@@ -27,7 +27,7 @@
 
 scale_scores<-function(data, ..., completed_thresh = .75, scales_only = FALSE, scale_regex="^[A-Za-z[:punct:]]*", item_regex="[0-9]+$|[0-9]+r$|[0-9]+_r"){
 
-  dropquo <- enquos(...)
+  dropquo <- dplyr::enquos(...)
 
   scaled <- data %>%
     dplyr::mutate(unique_row_id = 1:nrow(data))%>%
@@ -44,9 +44,9 @@ scale_scores<-function(data, ..., completed_thresh = .75, scales_only = FALSE, s
                                  scale_score,
                                  as.numeric(NA)))%>%
     dplyr::select(-na_prop)%>%
-    filter(!is.na(scale))
+    dplyr::filter(!is.na(scale))
 
-  message("Scale scores created for ", n_distinct(scaled$scale), " scales.\n",
+  message("Scale scores created for ", dplyr::n_distinct(scaled$scale), " scales.\n",
           "Scale Names:\n",
           paste(unique(scaled$scale), collapse = " "))
 
@@ -61,7 +61,7 @@ scale_scores<-function(data, ..., completed_thresh = .75, scales_only = FALSE, s
       dplyr::select(colnames(data), dplyr::everything(), -unique_row_id)
   }else{
     scaled<-scaled%>%
-      select(-unique_row_id)
+      splyr::select(-unique_row_id)
   }
 
     scaled

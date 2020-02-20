@@ -25,7 +25,7 @@
 #' reliability<-alpha_regex(data = personality, A1, E1, E2, O2, O5, C4, C5)
 
 alpha_regex<-function(data, ..., verbose_output = FALSE, scale_regex="^[A-Za-z[:punct:]]*", item_regex="[0-9]+$|[0-9]+r$|[0-9]+_r"){
-  dropquo<-enquos(...)
+  dropquo<-dplyr::enquos(...)
 
   scaled<-data%>%
     dplyr::mutate(unique_row_id = 1:nrow(data))%>%
@@ -56,7 +56,7 @@ alpha_regex<-function(data, ..., verbose_output = FALSE, scale_regex="^[A-Za-z[:
     alpha_df<-alpha%>%
       purrr::map_dfr(~as.data.frame(.$total))%>%
       dplyr::mutate(scale = names(alpha))%>%
-      dplyr::select(scale, everything())
+      dplyr::select(scale, dplyr::everything())
 
     return(alpha_df)
   }else{
