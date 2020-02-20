@@ -8,6 +8,7 @@
 #' @param item_regex A regular expression that is associated with the item naming conventions. Defaults to the last numeric values, r, or _r.
 #'
 #' @return A data frame or list (dependent on verbose_output argument) containing reliability information from psych::alpha
+#' @importFrom psych alpha
 #' @export
 #'
 #' @examples

@@ -9,6 +9,9 @@
 #' @param scales_only A logical value indicating whether only the scales should be returned. Defaults to FALSE where scales are bound to the original data frame as new columns.
 #'
 #' @return Data frame containing scale scores.
+#' @import dplyr
+#' @import tidyr
+#' @importFrom magrittr %>%
 #' @export
 #'
 #' @examples

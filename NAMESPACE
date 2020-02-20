@@ -2,3 +2,7 @@
 
 export(alpha_regex)
 export(scale_scores)
+import(dplyr)
+import(tidyr)
+importFrom(magrittr,"%>%")
+importFrom(psych,alpha)
